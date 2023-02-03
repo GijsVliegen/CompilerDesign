@@ -1,0 +1,56 @@
+Line  7:    CLASS
+Line  7:    IDENTIFIER [Test1]
+Line  7:    ":"
+Line  7:    RT_MATERIAL
+Line  7:    ";"
+Line  9:    TYPE [float]
+Line  9:    IDENTIFIER [foo]
+Line  9:    "("
+Line  9:    TYPE [int]
+Line  9:    IDENTIFIER [i]
+Line  9:    ")"
+Line  9:    "{"
+Line 10:    IF
+Line 10:    "("
+Line 10:    IDENTIFIER [i]
+Line 10:    "<"
+Line 10:    INT [0]
+Line 10:    ")"
+Line 11:    RETURN
+Line 11:    FLOAT [0.000000]
+Line 11:    ";"
+Line 12:    ELSE
+Line 13:    RETURN
+Line 13:    FLOAT [1.000000]
+Line 13:    ";"
+Line 14:    "}"
+Line 17:    TYPE [void]
+Line 17:    IDENTIFIER [shade]
+Line 17:    "("
+Line 17:    ")"
+Line 17:    "{"
+Line 18:    TYPE [int]
+Line 18:    IDENTIFIER [i]
+Line 18:    ";"
+Line 19:    TYPE [float]
+Line 19:    IDENTIFIER [f]
+Line 19:    ";"
+Line 21:    IDENTIFIER [i]
+Line 21:    "="
+Line 21:    INT [0]
+Line 21:    ";"
+Line 22:    IDENTIFIER [f]
+Line 22:    "="
+Line 22:    IDENTIFIER [foo]
+Line 22:    "("
+Line 22:    IDENTIFIER [i]
+Line 22:    ")"
+Line 22:    ";"
+Line 24:    STATE [rt_SampleColor]
+Line 24:    "="
+Line 24:    TYPE [color]
+Line 24:    "("
+Line 24:    IDENTIFIER [f]
+Line 24:    ")"
+Line 24:    ";"
+Line 25:    "}"

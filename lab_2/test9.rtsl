@@ -1,0 +1,9 @@
+
+
+class Test9 : rt_Camera;
+
+eta;
+/*
+  Test 9, syntax error:
+  "syntax error, unexpected IDENTIFIER, expecting $end on line 8"
+*/

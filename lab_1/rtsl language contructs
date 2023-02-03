@@ -1,0 +1,10 @@
+noteworthy keywords in rtsl
+
+class specifiëren met single inheritance
+"class /classname/ : base_interface;"
+
+for loop for lighting stuff
+"illuminance(...) {...}
+
+if statement for lighting stuff
+"ambient(...)"

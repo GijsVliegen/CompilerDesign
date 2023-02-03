@@ -1,0 +1,75 @@
+noteworthy keywords in rtsl
+
+class specifiëren met single inheritance
+"class /classname/ : base_interface;"
+
+constructor for a class
+"constructor..."
+
+for loop for lighting stuff
+"illuminance(...) {...}
+
+if statement for lighting stuff
+"ambient(...)"
+
+build-in values
+int; bool; float
+
+keywords for annotating how variables can change in different rendering stages
+attribute; uniform; varying; const
+
+keywords that define the scope of a var
+const; public; private; scratch
+
+keyword annotating a vector will always have lent of 1
+unit
+
+builtin constants and functions
+INT_MIN; INT_MAX; FLT_MIN; FLT_MAX; PI; matrixType inverse(matrixType m); 
+bvec3 inside(vec3 x, vec3 low, vec3 high); ...
+
+
+=================================CODE THAT DIDNT WORK YET ======================================
+
+
+NonNeg	[1-9]
+Number	[0-9]
+Octal	[0-7]
+HexLetter	(?i:[a-f])
+Letter	(?i:[a-z])
+N 	[2-4]
+PowerNotation 	[eE]"-"?{NonNeg}{Number}*
+
+Bool	"true"|"false"
+Int	{Number}*|{Octal}*|"0x"{Number|HexLetter}*
+FloatTwo 	({NonNeg}{Number}+|{Number})"."{Number}*{PowerNotation}?
+FloatOne	{NonNeg}{Number}*{PowerNotation}
+Float	({FloatOne}|{FloatTwo})("e"|"f"|"lf")
+Identifier 	({Letter}|"_")({Letter}|{Number}|"_")*
+Type	"void"|"bool"|"u"?"int"|"float"|"double"|([dbi]?"vec"{N})|(d?"mat"{N}("x"{N})?)|"color"
+State	"rt_"{Identifier}
+CKeyWord 	break|continue|do|for|while|switch|case|default|if|else|return|struct
+GLSLKeyWord 	attribute|const|uniform|varying|buffer|shared|coherent|volatile|restrict|readonly|writeonly|layout|centroid|flat|smooth|noperspective|patch|sample|subroutine|in|out|inout|invariant|precise|discard|lowp|mediump|highp|precision
+RTSLKeyWord 	class|illuminance|ambient|public|private|scratch
+RTSLInterfaceType	rt_Primitive|rt_Camera|rt_Material|rt_Texture|rt_Light
+KeyWord	{CkeyWord}|{GLSLKeyWord}|{RTSLKeyWord}|{RTSLInterfaceType}
+SingleChars	 "("|")"|"["|"]"|"{"|"}"|"."|","|";"|"+"|"-"|"~"|"!"|"*"|"/"|"%"|"<"|">"|"&"|"^"|"|"|"?"|":"|"="
+
+%%
+
+ /* TODO Implement the rest... */
+
+{Int}    {printf( "An integer: %s (%d)\n", yytext, atoi(yytext));}
+
+{Float}        {printf( "A float: %s (%g)\n", yytext, atof(yytext));}
+
+{KeyWord}        {printf( "A keyword: %s\n", yytext);}
+
+{Identifier}        printf( "An identifier: %s\n", yytext );
+
+{SingleChars}   printf( "An operator: %s\n", yytext );
+
+
+
+
+  
