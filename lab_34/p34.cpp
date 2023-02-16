@@ -41,23 +41,44 @@ public:
 
 	virtual bool runOnFunction(Function &F) {
     // Keep track of the variables that have been initialized.
-    std::set<Value *> initialized;
-
-    errs() << "yeeterdeyeetyeet: \n";
-    // Iterate through all instructions in the function.
+    std::set<StringRef> defined;
+    std::set<StringRef> initialized;
+    std::set<StringRef> uninitialized;
+    for (auto& arg : F.args()) {
+      initialized.insert(arg.getName());
+    }
     for (auto &BB : F) {
+    // Iterate through all instructions in the function.
       for (auto &I : BB) {
         // If the instruction is a store instruction, add the stored value to the set of initialized variables.
-        if (auto *SI = dyn_cast<StoreInst>(&I)) {
-          initialized.insert(SI->getValueOperand());
+        if (I.getOpcode() == Instruction::Alloca){
+          auto SI = dyn_cast<AllocaInst>(&I);
+          defined.insert(SI->getName());
+          //errs() << "alloca instructie : " << SI->getName() << "\n";
+        }
+        if (I.getOpcode() == Instruction::Store) {
+          auto SI = dyn_cast<StoreInst>(&I);
+          initialized.insert(SI->getPointerOperand()->getName()); //bevat store instructies, die
+          //errs() << "store instructie : " << SI->getPointerOperand()->getName() << "\n";
         }
         // If the instruction is a load instruction, check if the loaded value has been initialized.
         if (auto *LI = dyn_cast<LoadInst>(&I)) {
-          if (initialized.count(LI->getPointerOperand()) == 0) {
-            errs() << "Variable used before initialization: " << *LI->getPointerOperand() << "\n";
+          //errs() << "load instructie : " << LI->getPointerOperand()->getName() << "\n";
+          bool valueInitialized = false;
+          for (auto varName : initialized){
+            if (LI->getPointerOperand()->getName().compare(varName) == 0){ //niet dezelfde string
+              valueInitialized = true;
+            }
+          }
+          if (!valueInitialized){
+              //errs() << "hier: varnaam = " << LI->getPointerOperand()->getName() << "\n";
+              uninitialized.insert(LI->getPointerOperand()->getName());
           }
         }
       }
+    }
+    for (auto name : uninitialized){
+      errs() << name << "\n";
     }
     return false;
 	}

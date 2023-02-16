@@ -1,0 +1,8 @@
+store instructie : retval
+value stored : i32 0
+store instructie : t
+value stored : i32 30
+store instructie : k
+value stored :   %3 = load i32, i32* %t, align 4
+  %k = alloca i32, align 4
+  %t = alloca i32, align 4
