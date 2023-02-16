@@ -1,5 +1,74 @@
-pas op! uninitialized var a
-pas op! uninitialized var c
-pas op! uninitialized var e
-pas op! uninitialized var f
-pas op! uninitialized var g
+   in block: entry
+in set values: x, 
+out set values: , x, x.addr, 
+   in block: entry
+in set values: x, 
+out set values: , x, x.addr, 
+begin van blok entry
+geinitialiseerde waarden zijn oa: x
+store instructie : x.addr
+load instructie : x.addr
+store instructie : 
+   in block: entry
+in set values: x, y, 
+out set values: , x, x.addr, y, y.addr, 
+   in block: entry
+in set values: x, y, 
+out set values: , x, x.addr, y, y.addr, 
+begin van blok entry
+geinitialiseerde waarden zijn oa: x
+geinitialiseerde waarden zijn oa: y
+store instructie : x.addr
+store instructie : y.addr
+load instructie : y.addr
+load instructie : x.addr
+store instructie : 
+   in block: entry
+in set values: x, 
+out set values: x, x.addr, 
+   in block: entry
+in set values: x, 
+out set values: x, x.addr, 
+begin van blok entry
+geinitialiseerde waarden zijn oa: x
+store instructie : x.addr
+   in block: entry
+in set values: 
+out set values: 
+begin van blok entry
+   in block: entry
+in set values: x, 
+out set values: x, x.addr, 
+   in block: entry
+in set values: x, 
+out set values: x, x.addr, 
+begin van blok entry
+geinitialiseerde waarden zijn oa: x
+store instructie : x.addr
+load instructie : x.addr
+   in block: entry
+in set values: 
+out set values: d, e, f, retval, 
+   in block: entry
+in set values: 
+out set values: d, e, f, retval, 
+begin van blok entry
+store instructie : retval
+store instructie : d
+load instructie : e
+hier: varnaam = e
+store instructie : e
+store instructie : f
+load instructie : a
+hier: varnaam = a
+load instructie : b
+hier: varnaam = b
+load instructie : c
+hier: varnaam = c
+load instructie : d
+load instructie : e
+load instructie : f
+a
+b
+c
+e

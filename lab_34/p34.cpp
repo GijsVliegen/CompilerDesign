@@ -41,29 +41,94 @@ public:
 
 	virtual bool runOnFunction(Function &F) {
     // Keep track of the variables that have been initialized.
-    std::set<StringRef> defined;
-    std::set<StringRef> initialized;
+    std::set<StringRef> initializedArgs = {};
     std::set<StringRef> uninitialized;
-    for (auto& arg : F.args()) {
-      initialized.insert(arg.getName());
+    std::map<StringRef, std::set<StringRef>> initializedPerBBin;
+    std::map<StringRef, std::set<StringRef>> initializedPerBBout;
+    std::set<StringRef> allPossibleArgs;
+    for (auto &BB : F){ //get full set
+      initializedPerBBin[BB.getName()] = std::set<StringRef>();
+      initializedPerBBout[BB.getName()] = std::set<StringRef>();
+      for (auto& I : BB) {
+        if (isa<AllocaInst>(I)) {
+          allPossibleArgs.insert(I.getName());
+        }
+      }
     }
+
+    for (auto &BB : F){ //de IN en OUT sets initializeren
+      std::copy(allPossibleArgs.begin(), allPossibleArgs.end(), std::inserter(initializedPerBBin[BB.getName()], initializedPerBBin[BB.getName()].end()));
+      std::copy(allPossibleArgs.begin(), allPossibleArgs.end(), std::inserter(initializedPerBBout[BB.getName()], initializedPerBBout[BB.getName()].end()));
+    }
+
+    for (auto& arg : F.args()) {
+      initializedArgs.insert(arg.getName());
+    }
+    initializedPerBBin["entry"] = initializedArgs;
+
+    bool anythingChanged = true;
+    while(anythingChanged){
+      anythingChanged = false; //kijken of er nog veranderingen gebeuren
+      
+      for (auto &BB : F) {
+      // Iterate through all instructions in the function.
+        errs() << "   in block: " << BB.getName() << "\n"  ;
+        std::set<StringRef> intersect;
+        for (BasicBlock *Pred : predecessors(&BB)) { //in updaten
+          std::set_intersection(initializedPerBBin[BB.getName()].begin(), initializedPerBBin[BB.getName()].end(), initializedPerBBout[Pred->getName()].begin(), initializedPerBBout[Pred->getName()].end(), std::inserter(intersect, intersect.begin())); //unie in <<in>> zetten 
+          if (intersect.size() != initializedPerBBin[BB.getName()].size()){ //gewoon size vergelijken omdat er nooit iets gedeleted kan worden
+            anythingChanged = true;
+            initializedPerBBin[BB.getName()] = intersect;
+          }
+          intersect = {};
+        }
+
+        errs() << "in set values: ";
+        for (auto name : initializedPerBBin[BB.getName()]){
+          errs() << name << ", ";
+        }
+        errs() << "\n";
+        
+        std::set<StringRef> out;
+        std::copy(initializedPerBBin[BB.getName()].begin(), initializedPerBBin[BB.getName()].end(), std::inserter(out, out.begin()));
+        for (auto &I : BB) { //out updaten
+          if (I.getOpcode() == Instruction::Store) {
+            auto SI = dyn_cast<StoreInst>(&I);
+            out.insert(SI->getPointerOperand()->getName()); //bevat store instructies, die
+          }
+        }
+        if (out.size() != initializedPerBBout[BB.getName()].size()){
+          anythingChanged = true;
+        }
+        initializedPerBBout[BB.getName()] = out;
+
+
+        errs() << "out set values: ";
+        for (auto name : initializedPerBBout[BB.getName()]){
+          errs() << name << ", ";
+        }
+        errs() << "\n";
+
+      }
+    }
+      
     for (auto &BB : F) {
     // Iterate through all instructions in the function.
+      errs() << "begin van blok " << BB.getName() << "\n";
+      std::set<StringRef> initialized;
+      std::copy(initializedPerBBin[BB.getName()].begin(), initializedPerBBin[BB.getName()].end(), std::inserter(initialized, initialized.begin()));
+      for (auto name : initialized){
+        errs() << "geinitialiseerde waarden zijn oa: " << name << "\n";
+      }
       for (auto &I : BB) {
-        // If the instruction is a store instruction, add the stored value to the set of initialized variables.
-        if (I.getOpcode() == Instruction::Alloca){
-          auto SI = dyn_cast<AllocaInst>(&I);
-          defined.insert(SI->getName());
-          //errs() << "alloca instructie : " << SI->getName() << "\n";
-        }
         if (I.getOpcode() == Instruction::Store) {
           auto SI = dyn_cast<StoreInst>(&I);
           initialized.insert(SI->getPointerOperand()->getName()); //bevat store instructies, die
-          //errs() << "store instructie : " << SI->getPointerOperand()->getName() << "\n";
+          errs() << "store instructie : " << SI->getPointerOperand()->getName() << "\n";
         }
         // If the instruction is a load instruction, check if the loaded value has been initialized.
         if (auto *LI = dyn_cast<LoadInst>(&I)) {
-          //errs() << "load instructie : " << LI->getPointerOperand()->getName() << "\n";
+          errs() << "load instructie : " << LI->getPointerOperand()->getName() << "\n";
           bool valueInitialized = false;
           for (auto varName : initialized){
             if (LI->getPointerOperand()->getName().compare(varName) == 0){ //niet dezelfde string
@@ -71,7 +136,7 @@ public:
             }
           }
           if (!valueInitialized){
-              //errs() << "hier: varnaam = " << LI->getPointerOperand()->getName() << "\n";
+              errs() << "hier: varnaam = " << LI->getPointerOperand()->getName() << "\n";
               uninitialized.insert(LI->getPointerOperand()->getName());
           }
         }
