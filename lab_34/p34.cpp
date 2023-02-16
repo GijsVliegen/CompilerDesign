@@ -25,22 +25,6 @@
 
 using namespace llvm;
 
-namespace {
-
-struct UninitializedVariable : public FunctionPass {
-  static char ID;
-  UninitializedVariable() : FunctionPass(ID) {}
-
-  bool runOnFunction(Function &F) override {
-  }
-};
-
-} // namespace
-
-char UninitializedVariable::ID = 0;
-
-static RegisterPass<UninitializedVariable> X("uninitialized-variable", "Prints uninitialized variables");
-
 
 using namespace llvm;
 
@@ -56,21 +40,10 @@ public:
 	}
 
 	virtual bool runOnFunction(Function &F) {
-            // TODO
-            errs() << "def-pass\n";
-	    return false;
-	}
-};
-
-class FixingPass : public FunctionPass {
-public:
-	static char ID;
-	FixingPass() : FunctionPass(ID){}
-
-	virtual bool runOnFunction(Function &F){
     // Keep track of the variables that have been initialized.
     std::set<Value *> initialized;
 
+    errs() << "yeeterdeyeetyeet: \n";
     // Iterate through all instructions in the function.
     for (auto &BB : F) {
       for (auto &I : BB) {
@@ -87,6 +60,18 @@ public:
       }
     }
     return false;
+	}
+};
+
+class FixingPass : public FunctionPass {
+public:
+	static char ID;
+	FixingPass() : FunctionPass(ID){}
+
+	virtual bool runOnFunction(Function &F){
+            // TODO
+            errs() << "fix-pass\n";
+	    return false;
 	}
 };
 } // namespace
